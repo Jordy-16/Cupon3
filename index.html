@@ -11,7 +11,7 @@
     display:flex;align-items:center;justify-content:center;flex-direction:column;
     min-height:100vh;overflow:hidden;color:#fff;
   }
-  /* Estrellas parpadeando */
+  /* Estrellas */
   .star{position:absolute;width:3px;height:3px;background:white;border-radius:50%;
     animation:twinkle 3s infinite alternate;}
   .star:nth-child(1){top:20%;left:10%;animation-delay:0s;}
@@ -44,7 +44,8 @@
 </style>
 </head>
 <body>
-  <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+  <div class="star"></div><div class="star"></div><div class="star"></div>
+  <div class="star"></div><div class="star"></div>
 
   <!-- Espera -->
   <div id="lock" class="countdown">
@@ -64,16 +65,39 @@
   </div>
 
 <script>
-  function getTargetDate(offset){const now=new Date();return new Date(now.getFullYear(),now.getMonth()+offset,4,0,0,0);}
-  const target=getTargetDate(3);
-  document.getElementById("fecha").textContent=target.toLocaleDateString(undefined,{day:'2-digit',month:'long',year:'numeric'});
+  // FECHA FIJA: 4 DE ENERO DEL PRÓXIMO AÑO
+  const now = new Date();
+  const year = now.getMonth() > 0 || (now.getMonth() === 0 && now.getDate() > 4)
+              ? now.getFullYear() + 1 
+              : now.getFullYear();
+
+  const target = new Date(year, 0, 4, 0, 0, 0); // mes 0 = enero
+
+  document.getElementById("fecha").textContent = target.toLocaleDateString(
+    'es-ES',
+    { day:'2-digit', month:'long', year:'numeric' }
+  );
+
   function update(){
-    const now=new Date(),diff=target-now;
-    if(diff<=0){lock.classList.add("hidden");coupon.classList.remove("hidden");return;}
-    const d=Math.floor(diff/86400000),h=Math.floor((diff%86400000)/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
-    timer.textContent=`${d}d ${h}h ${m}m ${s}s`;
+    const now = new Date();
+    const diff = target - now;
+
+    if(diff <= 0){
+      lock.classList.add("hidden");
+      coupon.classList.remove("hidden");
+      return;
+    }
+
+    const d = Math.floor(diff / 86400000),
+          h = Math.floor((diff % 86400000) / 3600000),
+          m = Math.floor((diff % 3600000) / 60000),
+          s = Math.floor((diff % 60000) / 1000);
+
+    timer.textContent = `${d}d ${h}h ${m}m ${s}s`;
   }
-  update();setInterval(update,1000);
+
+  update();
+  setInterval(update,1000);
 </script>
 </body>
 </html>
